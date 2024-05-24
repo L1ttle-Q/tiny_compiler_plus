@@ -1,0 +1,9 @@
+int a := (2 + 2) + (2 + 2);
+int b := (1 + 4) + 1 + 4;
+int c := (a + b) + b + a;
+
+
+int k := a + b + a + b;
+int q := (a + b) + (a + b);
+write k;
+write q

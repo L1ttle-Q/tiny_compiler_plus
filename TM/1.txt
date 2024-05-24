@@ -1,0 +1,5 @@
+TM  simulation (enter h for help)...
+Enter command: Enter value for IN instruction: Enter value for IN instruction: Enter value for IN instruction: OUT instruction prints: 0
+HALT: 0,0,0
+Halted
+Enter command: Simulation done.

@@ -1,0 +1,39 @@
+float a, b := 2.9, c;
+int d := 2 + (8 * 7), p := 39;
+
+write b
+
+
+write d;
+a := 1.75;
+b := 5e-2;
+c := a / b; {35}
+d := a + b; {1.80}
+
+write c;
+write d;
+
+int valid, invalid;
+
+valid := 1;
+invalid := 0;
+
+int x, y, z;
+
+x := 4;
+y := 4;
+z := 6;
+
+if (x >= y) * (x <= y) then {1}
+  write valid
+end
+;
+if (x + y > z) * (x + z > y) * (y + z > x) then {1}
+  write valid
+  else
+    write invalid
+end
+;
+int k := x ^ z; {2}
+write k
+
