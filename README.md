@@ -10,3 +10,22 @@
 ### 5. Addition of type declarations, which can only be used after declaration. (But it is not actually implemented at the bottom layer, because strong typing requires additional type annotation for each address, which is a large workload)
 ### 6. Assign initial values when defining, and report errors for repeated definitions
 ### 7. Incorporate DAG optimization, merging the same variable components within the same expression.
+![DAG](TC/syntax_tree.jpg)
+## Usage
+
+**In 'TC' folder**
+
+```
+g++ *.c -o tiny -w
+./tiny *.tny
+cp *.tm ../TM
+```
+
+tip: makefile exists unknown problem, it's not usable for now(or you can commit to fix this problem).
+
+**In 'TM' folder**
+
+```
+g++ tm.c -o tm -w
+./tm *.tm
+```
