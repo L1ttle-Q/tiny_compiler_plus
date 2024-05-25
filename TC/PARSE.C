@@ -195,6 +195,8 @@ bool Cmp_Tree(TreeNode* a, TreeNode *b)
 
 void Tree_Merge(TreeNode*& a)
 {
+  if (NoMerge) {return ;}
+  
   Search_Tree::Node *p = Tr.Head;
   bool suc = false;
   while (p != NULL)

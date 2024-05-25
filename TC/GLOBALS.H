@@ -98,6 +98,12 @@ extern int TraceScan;
  */
 extern int TraceParse;
 
+/* NoMerge = TRUE causes the compiler ignore expression
+ * merge optimize
+ * will output the original syntax tree
+ */
+extern int NoMerge;
+
 /* TraceAnalyze = TRUE causes symbol table inserts
  * and lookups to be reported to the listing file
  */
