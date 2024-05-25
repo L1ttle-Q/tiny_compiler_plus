@@ -9,7 +9,7 @@
 ### 4. Direct use of integers in if condition judgments (actually, no extra implementation is needed, just remove the check for boolean types in syntax checking)
 ### 5. Addition of type declarations, which can only be used after declaration. (But it is not actually implemented at the bottom layer, because strong typing requires additional type annotation for each address, which is a large workload)
 ### 6. Assign initial values when defining, and report errors for repeated definitions
-### 7. Incorporate DAG optimization, merging the same variable components within the same expression.
+### 7. Incorporate DAG optimization, merging the same variable components within the same expression.(optional)
 ![DAG](TC/syntax_tree.jpg)
 ## Usage
 
