@@ -14,11 +14,24 @@ char _TR(TokenType x)
         case PLUS: res = '+'; break;
         case MINUS: res = '-'; break;
         case TIMES: res = '*'; break;
-        case OVER: res = '/';
-        case LPAREN: res = '(';
-        case RPAREN: res = ')';
+        case OVER: res = '/'; break;
+        case LPAREN: res = '('; break;
+        case RPAREN: res = ')'; break;
     }
     return res;
+}
+
+char * _TYPE(ExpType x)
+{
+    static char s[10];
+    switch(x)
+    {
+        case Integer: sprintf(s, "Int"); break;
+        case Float: sprintf(s, "Float"); break;
+        case Boolean: sprintf(s, "Bool"); break;
+        case Void: sprintf(s, "Void"); break;
+    }
+    return s;
 }
 
 char* trans(TreeNode* x)
@@ -30,16 +43,16 @@ char* trans(TreeNode* x)
         switch (p.type)
         {
         case Op:
-            sprintf(s, "%s %c\0", "Op", _TR(p.attr.op));
+            sprintf(s, "%s %c(%s)", "Op", _TR(p.attr.op), _TYPE(x->type));
             break;
         case Int:
-            sprintf(s, "%s %d\0", "Int", p.attr.valint);
+            sprintf(s, "%s %d", "Int", p.attr.valint);
             break;
         case F:
-            sprintf(s, "%s %.2f\0", "Float", p.attr.valfloat);
+            sprintf(s, "%s %.2f", "Float", p.attr.valfloat);
             break;
         case Id:
-            sprintf(s, "%s %s\0", "Id", p.attr.name);
+            sprintf(s, "%s %s", "Id", p.attr.name);
             break;
         }
     }
@@ -64,7 +77,7 @@ char* trans(TreeNode* x)
             sprintf(s, "Write");
             break;
         case DeclareK:
-            sprintf(s, "Declare");
+            sprintf(s, "Declare %s -> %s", x->attr.attr.name, _TYPE(x->type));
             break;
         }
     }

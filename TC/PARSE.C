@@ -122,6 +122,7 @@ TreeNode * assign_stmt(char* name)
   if (name == NULL) match(ID);
   match(ASSIGN);
   if (t!=NULL) t->child[0] = exp();
+  t->type = t->child[0]->type;
   return t;
 }
 
@@ -144,24 +145,35 @@ TreeNode * write_stmt(void)
   return t;
 }
 
+
 TreeNode * declare_stmt(ExpType type)
 { TreeNode *t = newStmtNode(DeclareK);
-  if (type == Integer) {match(DecINT); t->attr.type = Int;}
-  else {match(DecFLOAT); t->attr.type = F;}
+  if (type == Integer) {match(DecINT); t->type = Integer;}
+  else {match(DecFLOAT); t->type = Float;}
+  t->attr.type = Id;
   t->attr.attr.name = copyString(tokenString);
   match(ID);
-  if (token==ASSIGN) t->child[0] = assign_stmt(t->attr.attr.name);
+  if (token==ASSIGN)
+  {
+    t->child[0] = assign_stmt(t->attr.attr.name);
+    if (t->child[0]->type == Float && t->type == Integer) syntaxError("float value assign to int");
+  }
   TreeNode *now = t;
   while ((now!=NULL) && (token==COMMA))
   {
     match(COMMA);
     if (token != ID) {syntaxError("unexpected token -> "); printToken(token,tokenString); fprintf(listing,"      ");}
     now->child[1] = newStmtNode(DeclareK);
+    now->child[1]->attr.type = now->attr.type;
+    now->child[1]->type = now->type;
     now = now->child[1];
-    now->attr.type = now->attr.type;
     now->attr.attr.name = copyString(tokenString);
     match(ID);
-    if (token==ASSIGN) now->child[0] = assign_stmt(now->attr.attr.name);
+    if (token==ASSIGN)
+    {
+      now->child[0] = assign_stmt(now->attr.attr.name);
+      if (now->child[0]->type == Float && now->type == Integer) syntaxError("float value assign to int");
+    }
   }
   return t;
 }
@@ -196,10 +208,10 @@ bool Cmp_Tree(TreeNode* a, TreeNode *b)
 void Tree_Merge(TreeNode*& a)
 {
   if (NoMerge) {return ;}
-  
+
   Search_Tree::Node *p = Tr.Head;
   bool suc = false;
-  while (p != NULL)
+  while (p)
   {
     if (a == p->attr)
     {
@@ -211,7 +223,7 @@ void Tree_Merge(TreeNode*& a)
       delete a;
       a = p->attr;
       suc = true;
-      fprintf(listing, "Merge:(%d, %d)", a->attr.type, a->attr.attr);
+      fprintf(listing, "Merge:(%d, %d)\n", a->attr.type, a->attr.attr);
       break;
     }
     p = p->nxt;
@@ -222,10 +234,94 @@ void Tree_Merge(TreeNode*& a)
   }
 }
 
+static int tmp_cnt = 1;
+
+char * Build_tmp(int argc = -1)
+{
+  if (~argc)
+  {
+    char* s = new char[45];
+    sprintf(s, "tmp%d", argc);
+    return s;
+  }
+
+  static char s[45];
+  sprintf(s, "tmp%d", tmp_cnt++);
+  return s;
+}
+
+void TmpVarMerge(TreeNode *x)
+{
+  if (!x || !x->attr.opid) return ;
+
+  for (int i = 0; i < MAXCHILDREN; i++)
+  {
+    // TmpVarMerge(x->child[i]);
+                                //maximum of depth is 2
+    if (!x->child[i] || !x->child[i]->attr.opid) continue;
+    
+    TreeNode* tmp = newExpNode(IdK);
+    tmp->attr.type = Id;
+    tmp->attr.attr.name = Build_tmp(x->child[i]->attr.opid);
+    tmp->type = (ExpType)((int)tmp->type | (int)x->child[i]->type);
+    x->child[i] = tmp;
+  }
+}
+
+TreeNode * TmpVarBuild(TreeNode *x)
+{
+  Search_Tree Tr_rev; // Search_Tree is a stack, but we need to enumerate each element sequentially
+  Tr_rev.Head = NULL;
+  Search_Tree::Node *p = Tr.Head;
+  while (p)
+  {
+    Tr_rev.Head = new Search_Tree::Node(p->attr, Tr_rev.Head);
+    p = p->nxt;
+  }
+
+  p = Tr_rev.Head;
+  TreeNode *res = NULL;
+  while (p)
+  {
+    if (p->attr->attr.type != Op)
+    {
+      Search_Tree::Node *_p = p;
+      p = p->nxt;
+      delete _p;
+      continue;
+    }
+    TreeNode *t = newStmtNode(DeclareK);
+    p->attr->attr.opid = atoi(Build_tmp() + 3);
+
+    t->child[1] = newStmtNode(AssignK);
+    fprintf(listing, "Build tmpvar: %d (%d)\n", p->attr->attr.opid, p->attr->attr.attr.op);
+    t->child[1]->attr.attr.name = Build_tmp(p->attr->attr.opid);
+    t->child[1]->attr.type = Id;
+
+    t->attr.type = Id;
+    t->attr.attr.name = t->child[1]->attr.attr.name;
+
+    TmpVarMerge(p->attr);
+    t->child[1]->child[0] = p->attr;
+    t->type = t->child[1]->type = t->child[1]->child[0]->type;
+    t->attr.type = t->child[1]->attr.type = t->child[1]->child[0]->attr.type;
+
+    Search_Tree::Node *_p = p;
+    p = p->nxt;
+    delete _p;
+
+    t->child[0] = res;
+    res = t;
+  }
+  if (!res) return x;
+  return res;
+}
+
 TreeNode * exp(void)
 {
   Create_Search_Tree();
   TreeNode *res = _exp();
+  if (TmpVarOptimize) {res = TmpVarBuild(res);}
   Delete_Search_Tree();
   return res;
 }
@@ -238,6 +334,8 @@ TreeNode * _exp(void)
       p->child[0] = t;
       p->attr.attr.op = token;
       p->attr.type = Op;
+      // p->type = Boolean;
+      p->type = Integer;
       t = p;
     }
     match(token);
@@ -258,7 +356,10 @@ TreeNode * simple_exp(void)
       p->attr.type = Op;
       t = p;
       match(token);
+
       t->child[1] = term();
+      t->type = (ExpType)((int)t->child[0]->type | (int)t->child[1]->type);
+      Tree_Merge(t);
     }
   }
   if (t != NULL) Tree_Merge(t);
@@ -275,7 +376,10 @@ TreeNode * term(void)
       p->attr.type = Op;
       t = p;
       match(token);
+
       p->child[1] = factor();
+      t->type = (ExpType)((int)t->child[0]->type | (int)t->child[1]->type);
+      Tree_Merge(t);
     }
   }
   if (t != NULL) Tree_Merge(t);
@@ -291,6 +395,7 @@ TreeNode * factor(void)
       {
         t->attr.attr.valint = atoi(tokenString);
         t->attr.type = Int;
+        t->type = Integer;
       }
       match(INT);
       break;
@@ -300,6 +405,7 @@ TreeNode * factor(void)
       {
         sscanf(tokenString, "%f", &t->attr.attr.valfloat);
         t->attr.type = F;
+        t->type = Float;
       }
       match(FLOAT);
       break;
@@ -309,6 +415,7 @@ TreeNode * factor(void)
       {
         t->attr.attr.name = copyString(tokenString);
         t->attr.type = Id;
+        t->type = Integer; // Default: regard id as int
       }
       match(ID);
       break;

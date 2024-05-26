@@ -94,6 +94,7 @@ TreeNode * newExpNode(ExpKind kind)
     t->nodekind = ExpK;
     t->kind.exp = kind;
     t->lineno = lineno;
+    t->attr.opid = 0;
     t->type = Void;
   }
   return t;
@@ -156,7 +157,14 @@ void printTree( TreeNode * tree )
           fprintf(listing,"Write\n");
           break;
         case DeclareK:
-          fprintf(listing,"Declare: %s->%s\n",tree->attr.attr.name,tree->attr.type == Int? "int" : "float");
+          fprintf(listing,"Declare: %s->",tree->attr.attr.name);
+          switch(tree->type)
+          {
+            case Integer: fprintf(listing, "int\n"); break;
+            case Float: fprintf(listing, "float\n"); break;
+            case Boolean: fprintf(listing, "bool\n"); break;
+            case Void: fprintf(listing, "void\n"); break;
+          }
           break;
         default:
           fprintf(listing,"Unknown StmtNode kind\n");
@@ -167,6 +175,13 @@ void printTree( TreeNode * tree )
     { switch (tree->kind.exp) {
         case OpK:
           fprintf(listing,"Op: ");
+          switch(tree->type)
+          {
+            case Integer: fprintf(listing, "(int) "); break;
+            case Float: fprintf(listing, "(float) "); break;
+            case Boolean: fprintf(listing, "(bool) "); break;
+            case Void: fprintf(listing, "(void) "); break;
+          }
           printToken(tree->attr.attr.op,"\0");
           break;
         case ConstK:

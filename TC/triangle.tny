@@ -1,7 +1,11 @@
-int a := (2 + 2) + (2 + 2);
-int b := (1 + 4) + 1 + 4;
+int aq, aw, ae, ar;
+int a := ((2 + 2) + (2 + 2)) * (2 + 2), b := (1 + 4) + 1 + 4;
+float pp := 8.3e-3 + (a + b) - 2.6;
 int c := (a + b) + b + a;
 
+write a;
+write b;
+write c;
 
 int k := a + b + a + b;
 int q := (a + b) + (a + b);

@@ -41,9 +41,12 @@ FILE * code;
 int EchoSource = TRUE;
 int TraceScan = TRUE;
 int TraceParse = TRUE;
-int NoMerge = FALSE;
 int TraceAnalyze = TRUE;
 int TraceCode = FALSE;
+
+/* allocate and set optimize flags */
+int NoMerge = FALSE;
+int TmpVarOptimize = TRUE;
 
 int Error = FALSE;
 
@@ -68,7 +71,7 @@ main( int argc, char * argv[] )
   while (getToken()!=ENDFILE);
 #else
   syntaxTree = parse();
-  if (TraceParse) {
+  if (! Error && TraceParse) {
     fprintf(listing,"\nSyntax tree:\n");
     printTree(syntaxTree);
     conv_DOT(syntaxTree);

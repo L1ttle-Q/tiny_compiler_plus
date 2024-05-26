@@ -62,6 +62,7 @@ typedef struct {
              int valint;
              float valfloat;
              char * name; } attr;
+   int opid;
    AttrType type;
    } Attr;
 
@@ -98,12 +99,6 @@ extern int TraceScan;
  */
 extern int TraceParse;
 
-/* NoMerge = TRUE causes the compiler ignore expression
- * merge optimize
- * will output the original syntax tree
- */
-extern int NoMerge;
-
 /* TraceAnalyze = TRUE causes symbol table inserts
  * and lookups to be reported to the listing file
  */
@@ -113,6 +108,18 @@ extern int TraceAnalyze;
  * to the TM code file as code is generated
  */
 extern int TraceCode;
+
+/* NoMerge = TRUE causes the compiler ignore
+ * expression merge optimize(merge commom expressions
+ * in the syntax tree)
+ * will output the original syntax tree
+ */
+extern int NoMerge;
+
+/* TmpVarOptimize = TRUE causes the compiler merge the
+ * commom expressions as temporary variables
+ */
+extern int TmpVarOptimize;
 
 /* Error = TRUE prevents further passes if an error occurs */
 extern int Error; 

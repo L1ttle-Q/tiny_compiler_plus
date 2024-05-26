@@ -127,7 +127,9 @@ static void checkNode(TreeNode * t)
           */
           if ((t->attr.attr.op == EQ) || (t->attr.attr.op == LT) || (t->attr.attr.op == GT) ||
               (t->attr.attr.op == LET) || (t->attr.attr.op == GET))
-            t->type = Boolean;
+            t->type = Integer;
+          else if (t->attr.attr.op == XOR)
+            {if (t->type != Integer) typeError(t, "XOR applied to non-integer");}
           else
             t->type = t->attr.type == Int ? Integer : Float;
           break;

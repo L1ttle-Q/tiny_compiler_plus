@@ -79,13 +79,11 @@ static void genStmt( TreeNode * tree)
          break; /* assign_k */
 
       case DeclareK :
-      if (TraceCode) emitComment("-> Declare") ;
-      p1 = tree->child[0] ;
-      p2 = tree->child[1] ;
-      cGen(p1);
-      cGen(p2);
-      if (TraceCode)  emitComment("<- Declare") ;
-      break; /* DeclareK */
+         if (TraceCode) emitComment("-> Declare") ;
+         cGen(tree->child[0]);
+         cGen(tree->child[1]);
+         if (TraceCode)  emitComment("<- Declare") ;
+         break; /* DeclareK */
 
       case ReadK:
          emitRO("IN",ac,0,0,"read integer value");
