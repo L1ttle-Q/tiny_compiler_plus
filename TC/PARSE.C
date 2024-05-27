@@ -373,6 +373,7 @@ TreeNode * simple_exp(void)
           if (t->child[1]->type == Float) t2 = t->child[1]->attr.attr.valfloat;
           else t2 = t->child[1]->attr.attr.valint;
 
+          t->kind.exp = ConstK;
           t->attr.type = (AttrType)max(ty1, ty2);
           if (t->attr.type == Int)
           {
@@ -393,12 +394,11 @@ TreeNode * simple_exp(void)
             }
           }
 
-          /*
-          delete t->child[0];
+          // delete t->child[0];
           t->child[0] = NULL;
-          delete t->child[1];
+          // delete t->child[1];
           t->child[1] = NULL;
-          */
+
         }
       }
 
@@ -435,16 +435,16 @@ TreeNode * term(void)
           if (t->child[1]->type == Float) t2 = t->child[1]->attr.attr.valfloat;
           else t2 = t->child[1]->attr.attr.valint;
 
+          t->kind.exp = ConstK;
           t->attr.type = (AttrType)max(ty1, ty2);
           if (t->attr.type == Int) t->attr.attr.valint = (int)(t->attr.attr.op == TIMES ? (t1 * t2) : (t1 / t2));
           else t->attr.attr.valfloat = (t->attr.attr.op == TIMES ? (t1 * t2) : (t1 / t2));
 
-          /*
-          delete t->child[0];
+          // delete t->child[0];
           t->child[0] = NULL;
-          delete t->child[1];
+          // delete t->child[1];
           t->child[1] = NULL;
-          */
+
         }
       }
 
