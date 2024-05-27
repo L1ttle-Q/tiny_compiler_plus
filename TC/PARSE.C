@@ -8,6 +8,7 @@
 #include "util.h"
 #include "scan.h"
 #include "parse.h"
+#define max(a, b) (a > b ? a : b)
 
 static TokenType token; /* holds current token */
 
@@ -359,6 +360,48 @@ TreeNode * simple_exp(void)
 
       t->child[1] = term();
       t->type = (ExpType)((int)t->child[0]->type | (int)t->child[1]->type);
+
+      if (ConstMerge)
+      {
+        int ty1 = t->child[0]->attr.type, ty2 = t->child[1]->attr.type;
+        if (((ty1 & 1) ^ (ty1 >> 1)) &&
+            ((ty2 & 1) ^ (ty2 >> 1)))
+        {
+          float t1, t2;
+          if (t->child[0]->type == Float) t1 = t->child[0]->attr.attr.valfloat;
+          else t1 = t->child[0]->attr.attr.valint;
+          if (t->child[1]->type == Float) t2 = t->child[1]->attr.attr.valfloat;
+          else t2 = t->child[1]->attr.attr.valint;
+
+          t->attr.type = (AttrType)max(ty1, ty2);
+          if (t->attr.type == Int)
+          {
+            switch(p->attr.attr.op)
+            {
+              case PLUS: t->attr.attr.valint = (int)(t1 + t2); break;
+              case MINUS: t->attr.attr.valint = (int)(t1 - t2); break;
+              case XOR: t->attr.attr.valint = (int)t1 ^ (int)t2; break;
+            }
+          }
+          else
+          {
+            switch(p->attr.attr.op)
+            {
+              case PLUS: t->attr.attr.valfloat = t1 + t2; break;
+              case MINUS: t->attr.attr.valfloat = t1 - t2; break;
+              case XOR: syntaxError("XOR applied to float"); break;
+            }
+          }
+
+          /*
+          delete t->child[0];
+          t->child[0] = NULL;
+          delete t->child[1];
+          t->child[1] = NULL;
+          */
+        }
+      }
+
       Tree_Merge(t);
     }
   }
@@ -379,6 +422,32 @@ TreeNode * term(void)
 
       p->child[1] = factor();
       t->type = (ExpType)((int)t->child[0]->type | (int)t->child[1]->type);
+
+      if (ConstMerge)
+      {
+        int ty1 = t->child[0]->attr.type, ty2 = t->child[1]->attr.type;
+        if (((ty1 & 1) ^ (ty1 >> 1)) &&
+            ((ty2 & 1) ^ (ty2 >> 1)))
+        {
+          float t1, t2;
+          if (t->child[0]->type == Float) t1 = t->child[0]->attr.attr.valfloat;
+          else t1 = t->child[0]->attr.attr.valint;
+          if (t->child[1]->type == Float) t2 = t->child[1]->attr.attr.valfloat;
+          else t2 = t->child[1]->attr.attr.valint;
+
+          t->attr.type = (AttrType)max(ty1, ty2);
+          if (t->attr.type == Int) t->attr.attr.valint = (int)(t->attr.attr.op == TIMES ? (t1 * t2) : (t1 / t2));
+          else t->attr.attr.valfloat = (t->attr.attr.op == TIMES ? (t1 * t2) : (t1 / t2));
+
+          /*
+          delete t->child[0];
+          t->child[0] = NULL;
+          delete t->child[1];
+          t->child[1] = NULL;
+          */
+        }
+      }
+
       Tree_Merge(t);
     }
   }

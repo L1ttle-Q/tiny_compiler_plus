@@ -47,6 +47,7 @@ int TraceCode = FALSE;
 /* allocate and set optimize flags */
 int NoMerge = FALSE;
 int TmpVarOptimize = TRUE;
+int ConstMerge = TRUE;
 
 int Error = FALSE;
 

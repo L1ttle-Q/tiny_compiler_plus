@@ -121,6 +121,11 @@ extern int NoMerge;
  */
 extern int TmpVarOptimize;
 
+/* ConstMerge = TRUE causes the compiler merge the
+ * const numbers
+ */
+extern int ConstMerge;
+
 /* Error = TRUE prevents further passes if an error occurs */
 extern int Error; 
 #endif

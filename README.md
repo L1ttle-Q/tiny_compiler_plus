@@ -14,6 +14,8 @@
 ### 8. Based on step 7, use temporary variables for storage to optimize the underlying code generation.
 ![DAG_tmpvar](TC/syntax_tree_1.jpg)
 ### 9. Stronger type checking at declaration (However, type checking can only be done on constants, not on variables in expressions, because types are not marked in the symbol table)
+### 10. Add constant merging
+![DAG_constmerge](TC/syntax_tree_2.jpg)
 
 ## Usage
 
