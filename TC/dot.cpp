@@ -4,6 +4,9 @@ Input: Output stream, "root node" of the syntax tree
 Output: Graphviz (DOT language) file at the specified path
 */
 
+#include <stdio.h>
+#include <stdbool.h>
+#include "parse.h"
 #include "dot.h"
 
 char _TR(TokenType x)
