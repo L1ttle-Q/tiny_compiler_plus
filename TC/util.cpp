@@ -49,6 +49,7 @@ void printToken( TokenType token, const char* tokenString )
     case FLOAT:
       fprintf(listing,
           "FLOAT, val=%s\n",tokenString);
+      break;
     case ID:
       fprintf(listing,
           "ID, name= %s\n",tokenString);
