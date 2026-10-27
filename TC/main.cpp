@@ -105,6 +105,6 @@ int main( int argc, char * argv[] )
 #endif
   fprintf(listing, "--------%s--------",Error ? "Fail to Compile" : "Compile Successfully");
   fclose(source);
-  return 0;
+  return Error ? 1 : 0;
 }
 

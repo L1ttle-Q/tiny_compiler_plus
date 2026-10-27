@@ -123,7 +123,7 @@ TreeNode * assign_stmt(char* name)
   if (name == NULL) match(ID);
   match(ASSIGN);
   if (t!=NULL) t->child[0] = exp();
-  t->type = t->child[0]->type;
+  if (t != NULL) t->type = t->child[0] != NULL ? t->child[0]->type : Void;
   return t;
 }
 

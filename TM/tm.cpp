@@ -440,9 +440,9 @@ STEPRESULT stepTM (void)
     /***********************************/
       do
       { printf("Enter value for IN instruction: ") ;
-        fflush (stdin);
         fflush (stdout);
-        gets(in_Line);
+        if (fgets(in_Line, LINESIZE, stdin) == NULL) return srTYPE_ERR;
+        in_Line[strcspn(in_Line, "\r\n")] = '\0';
         lineLen = strlen(in_Line) ;
         inCol = 0;
         ok = getNum();
@@ -587,9 +587,9 @@ int doCommand (void)
   int regNo, loc;
   do
   { printf ("Enter command: ");
-    fflush (stdin);
     fflush (stdout);
-    gets(in_Line);
+    if (fgets(in_Line, LINESIZE, stdin) == NULL) return FALSE;
+    in_Line[strcspn(in_Line, "\r\n")] = '\0';
     lineLen = strlen(in_Line);
     inCol = 0;
   }
