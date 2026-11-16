@@ -1,0 +1,7 @@
+int score := 75;
+if score >= 60 then
+  write 1
+else
+  write 0
+end;
+write 5 ^ 3

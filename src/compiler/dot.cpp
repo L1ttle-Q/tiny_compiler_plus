@@ -148,4 +148,5 @@ void conv_DOT(TreeNode * rt)
     PrintGraphviz(out, rt);
     Delete_fg();
     fprintf(out, "}\n");
+    fclose(out);
 }

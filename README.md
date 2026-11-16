@@ -1,57 +1,114 @@
-# tiny_compiler_plus
-**Based on tiny, several improvements have been applied**
+# TINY compiler extensions
+
+[中文](README_zh.md)
+
+This project extends the TINY compiler with language features and expression optimizations, and includes a TM virtual machine for executing generated instructions.
 
 ## Highlights
 
-### 1. Addition of floating point operations
-### 2. Addition of XOR operation (useful for replacing boolean operations with integer operations in logical operations, which makes it logically complete)
-### 3. Implementation of '>=' and '<=' in analysis and assembly code generation (already implemented in the virtual machine)
-### 4. Direct use of integers in if condition judgments
-### 5. Addition of type declarations, which can only be used after declaration. (But it is not actually implemented at the bottom layer, because strong typing requires additional type annotation for each address, which is a large workload)
-### 6. Assign initial values when defining, and report errors for repeated definitions
-### 7. Incorporate DAG optimization, merging the same variable components within the same expression.
-![DAG](TC/syntax_tree.jpg)
-### 8. Based on step 7, use temporary variables for storage to optimize the underlying code generation.
-![DAG_tmpvar](TC/syntax_tree_1.jpg)
-### 9. Stronger type checking at declaration (However, type checking can only be done on constants, not on variables in expressions, because types are not marked in the symbol table)
-### 10. Add constant merging
-![DAG_constmerge](TC/syntax_tree_2.jpg)
+### 1. Floating-point arithmetic
 
-## Usage
+Supports floating-point constants and arithmetic.
 
-**In the 'TC' folder**
+### 2. XOR
 
-```
-make
-```
-windows
-```
-tiny x.tny
-copy x.tm ../TM
-```
-mac/linux
-```
-./tiny x.tny
-cp x.tm ../TM
-```
-This will generate the executable file for tiny, compile the .tny file to generate a .tm file and copy it to the /TM directory.
+Supports the integer XOR operator `^`.
 
-Also, you can use
-```
-dot -Tjpg syntax_tree.dot -o syntax_tree.jpg
-```
-to generate a visualization of the syntax tree.
+### 3. Greater than or equal and less than or equal
 
-**In the 'TM' folder**
+Supports `>=` and `<=` in analysis and TM instruction generation.
 
+### 4. Integer conditions
+
+Supports integers directly in `if` conditions.
+
+### 5. Type declarations
+
+Supports `int` and `float` declarations and use after declaration.
+
+### 6. Initialization and duplicate declaration checks
+
+Supports initialization in declarations and checks duplicate declarations.
+
+### 7. Expression DAG optimization
+
+Merges repeated subexpressions within an expression.
+
+![DAG](docs/images/syntax_tree.jpg)
+
+### 8. Temporary variable optimization
+
+Stores merged expression results in temporary variables for reuse in generated code.
+
+![DAG and temporary variables](docs/images/syntax_tree_1.jpg)
+
+### 9. Declaration type checks
+
+Checks constant initialization values in declarations.
+
+### 10. Constant folding
+
+Combines constant calculations in expressions.
+
+![Constant folding](docs/images/syntax_tree_2.jpg)
+
+## Layout
+
+```text
+src/compiler/       compiler source files
+src/vm/             TM virtual machine source
+include/compiler/   compiler headers
+examples/           TINY example inputs
+docs/images/        syntax tree images and DOT files
+docs/reference/     reference code
 ```
-g++ tm.c -o tm -w
+
+## Examples
+
+| Input | Features | Expected output |
+| --- | --- | --- |
+| `examples/arithmetic.tny` | Floating-point declaration, initialization, and multiplication | `10.000000` |
+| `examples/conditions.tny` | `>=` conditional and integer XOR | `1`, `6` |
+| `examples/optimization.tny` | Repeated subexpressions and temporary variables | `49` |
+
+## Build and run
+
+### Windows (PowerShell + MinGW)
+
+Install CMake 3.21 or later, `g++`, and `mingw32-make`, and add them to `PATH`. From the repository root:
+
+```powershell
+cmake --preset mingw
+cmake --build --preset mingw
+Copy-Item examples/optimization.tny build/optimization.tny
+cd build
+.\tiny.exe optimization.tny
+Get-Content .\optimization.tm
+.\tm.exe optimization.tm
 ```
-windows
+
+At the TM prompt, enter `g` to execute and print `49`, `q` to quit, or `h` to list commands.
+
+With Graphviz installed, generate and open the syntax tree image from `build`:
+
+```powershell
+dot -Tpng syntax_tree.dot -o optimization.png
+Invoke-Item .\optimization.png
 ```
-tm x.tm
+
+### Linux / Macos
+
+Install CMake 3.16 or later, `g++`, Make, and Graphviz. From the repository root:
+
+```sh
+cmake -S . -B build -G "Unix Makefiles"
+cmake --build build
+cp examples/optimization.tny build/optimization.tny
+cd build
+./tiny optimization.tny
+cat optimization.tm
+dot -Tpng syntax_tree.dot -o optimization.png
+./tm optimization.tm
 ```
-mac/linux
-```
-./tm x.tm
-```
+
+At the TM prompt, enter `g` to run and `q` to quit.
