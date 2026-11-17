@@ -75,7 +75,8 @@ docs/reference/     参考代码
 
 ### Windows（PowerShell + MinGW）
 
-准备 CMake 3.21 或更新版本、`g++` 和 `mingw32-make`，并将它们加入 `PATH`。在仓库根目录执行：
+准备 CMake 3.21 或更新版本、`g++`、`make` 和 `mingw32-make`，并将它们加入 `PATH`。
+直接双击 `execute.bat` 构建，或在仓库根目录执行：
 
 ```powershell
 cmake --preset mingw
@@ -98,11 +99,11 @@ Invoke-Item .\optimization.png
 
 ### Linux / Macos
 
-准备 CMake 3.16 或更新版本、`g++`、Make 和 Graphviz。在仓库根目录执行：
+准备 CMake 3.21 或更新版本、`g++`、Make 和 Graphviz。在仓库根目录执行：
 
 ```sh
-cmake -S . -B build -G "Unix Makefiles"
-cmake --build build
+cmake --preset unix
+cmake --build --preset unix
 cp examples/optimization.tny build/optimization.tny
 cd build
 ./tiny optimization.tny

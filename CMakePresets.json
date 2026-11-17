@@ -9,12 +9,24 @@
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "g++"
       }
+    },
+    {
+      "name": "unix",
+      "displayName": "Linux / macOS",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "g++"
+      }
     }
   ],
   "buildPresets": [
     {
       "name": "mingw",
       "configurePreset": "mingw"
+    },
+    {
+      "name": "unix",
+      "configurePreset": "unix"
     }
   ]
 }

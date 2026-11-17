@@ -75,7 +75,8 @@ docs/reference/     reference code
 
 ### Windows (PowerShell + MinGW)
 
-Install CMake 3.21 or later, `g++`, and `mingw32-make`, and add them to `PATH`. From the repository root:
+Install CMake 3.21 or later, `g++`, `make`, and `mingw32-make`, and add them to `PATH`.
+Double-click `execute.bat` to build, or run from the repository root:
 
 ```powershell
 cmake --preset mingw
@@ -98,11 +99,11 @@ Invoke-Item .\optimization.png
 
 ### Linux / Macos
 
-Install CMake 3.16 or later, `g++`, Make, and Graphviz. From the repository root:
+Install CMake 3.21 or later, `g++`, Make, and Graphviz. From the repository root:
 
 ```sh
-cmake -S . -B build -G "Unix Makefiles"
-cmake --build build
+cmake --preset unix
+cmake --build --preset unix
 cp examples/optimization.tny build/optimization.tny
 cd build
 ./tiny optimization.tny

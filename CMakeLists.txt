@@ -19,5 +19,7 @@ add_executable(tiny
     src/compiler/cgen.cpp
 )
 target_include_directories(tiny PRIVATE include/compiler)
+target_compile_options(tiny PRIVATE -w)
 
 add_executable(tm src/vm/tm.cpp)
+target_compile_options(tm PRIVATE -w)
